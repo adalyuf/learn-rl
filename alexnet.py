@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
+import gc
 
 from torchvision import datasets, transforms
 
@@ -45,18 +46,14 @@ print(f"Splitting on {split}, validation size: {len(validation_indices)} trainin
 #These indices will be used in a sampler to select these from the training data
 train_sampler = SubsetRandomSampler(train_indices)
 validation_sampler = SubsetRandomSampler(validation_indices)
+test_sampler = SubsetRandomSampler(list(range(len(test_data))))
 
 train_loader = DataLoader(train_data, batch_size=64, sampler=train_sampler)
 validation_loader = DataLoader(train_data, batch_size=64, sampler=validation_sampler)
-test_loader = DataLoader(test_data, batch_size=64, shuffle=True)
+test_loader = DataLoader(test_data, batch_size=64, sampler=test_sampler)
 
 images, labels = next(iter(train_loader))
-
-canvas = plt.figure(figsize=(20,4))
-for i in range(20):
-  fig = plt.subplot(2,10, i+1, xticks=[], yticks=[])
-  plt.imshow((images[i].permute(1,2,0)+1)/2) #Pixel values in range -1,1 normalize to 0,1
-  fig.set_title(classes[labels[i]])
+writer.add_images("sample_images", images[1:17], global_step=0)
 
 class Net(nn.Module):
   def __init__(self):
@@ -145,7 +142,6 @@ class CleanAlexNet(nn.Module):
         x = self.fc8(x)
         return x
 
-
 model = CleanAlexNet()
 print(model)
 
@@ -171,6 +167,8 @@ def model_train(model, n_epochs):
             loss = criterion(output, target)
             loss.backward()
             writer.add_scalar("Loss/train", loss, epoch)
+            writer.add_scalar("Memory/allocated", torch.cuda.memory_allocated(), epoch)
+            writer.add_scalar("Memory/reserved", torch.cuda.memory_reserved(), epoch)
             optimizer.step()
             train_loss += loss.item() * data.size(0)
 
@@ -196,69 +194,54 @@ def model_train(model, n_epochs):
 
         if validation_loss < validation_loss_min:
             print(f"Validation loss reduced from {validation_loss_min:.2f} to {validation_loss:.2f}. Saving model")
-            torch.save(model.state_dict(), 'model_cifar.pt')
+            torch.save(model.state_dict(), 'models/model_cifar.pt')
             validation_loss_min = validation_loss
 
 def model_eval():
     model = CleanAlexNet()
-    model.load_state_dict(torch.load('model_cifar.pt'))
-
-    # helper function
-    def add_pr_curve_tensorboard(class_index, test_probs, test_label, global_step=0):
-        '''
-        Takes in a "class_index" from 0 to 9 and plots the corresponding
-        precision-recall curve
-        '''
-        tensorboard_truth = test_label == class_index
-        tensorboard_probs = test_probs[:, class_index]
-        # print(f"Class index: {class_index}, tensorboard_truth: {tensorboard_truth.shape}, tensorboard_probs: {tensorboard_probs.shape}")
-
-        writer.add_pr_curve(classes[class_index],
-                            tensorboard_truth,
-                            tensorboard_probs,
-                            global_step=global_step)
-        writer.close()
+    model.load_state_dict(torch.load('models/model_cifar.pt'))
 
     test_loss = 0.0
     class_correct = list(0.0 for i in range(10))
     class_total = list(0.0 for i in range(10))
-    class_probs = []
-    class_label = []
+    n_runs = 0 
 
     model.eval()
     for data, target in test_loader:
-        # if torch.cuda.is_available():
-        #     data = data.cuda()
-        #     target = target.cuda()
-        #     model = model.cuda()
+        if torch.cuda.is_available():
+            data = data.cuda()
+            target = target.cuda()
+            model = model.cuda()
         output = model(data)
         loss = criterion(output, target)
         test_loss = test_loss + (loss.item() * data.size(0))
         _, pred = torch.max(output, dim=1)
         correct = pred.eq(target.data)
-        class_probs_batch = [F.softmax(el, dim=0) for el in output]
-
-        class_probs.append(class_probs_batch)
-        class_label.append(target)  # Changed from labels to target
+        writer.add_scalar("Eval/memory_allocated"   , torch.cuda.memory_allocated() , n_runs*data.size(0))
+        writer.add_scalar("Eval/memory_reserved"    , torch.cuda.memory_reserved()  , n_runs*data.size(0))
+        writer.add_scalar("Eval/loss"               , loss, n_runs*data.size(0))
+        writer.add_scalar("Eval/accuracy"           , torch.sum(correct).item()/data.size(0), n_runs*data.size(0))
+        writer.add_scalar("Eval/n_runs"             , n_runs                        , n_runs*data.size(0))
+        writer.add_scalar("Eval/batch_size"         , data.size(0)                  , n_runs*data.size(0))
+        # For some reason, this is only 1/4 of the actual number of runs
+        n_runs += 1
+  
         for i in range(data.size(0)): #Data size 0 indicates batch size
             label = target.data[i]
             class_correct[label] += correct[i].item() #Apparently you can add True/False as if they are 1 or 0
             class_total[label] += 1
-    
-    test_probs = torch.cat([torch.stack(batch) for batch in class_probs])
-    test_label = torch.cat(class_label)
+           
     test_loss = test_loss / len(test_loader.dataset)
     print(f'Test Loss: {test_loss:.6f}')
 
     for i in range(10):
         if class_total[i] > 0:
-            print('Test Accuracy of %5s: %2d%% (%2d/%2d)' % (
-                classes[i], 100 * class_correct[i] / class_total[i],
-                np.sum(class_correct[i]), np.sum(class_total[i])))
-            add_pr_curve_tensorboard(i, test_probs, test_label)
+            print(f'Test Accuracy of {classes[i]}: {100 * class_correct[i] / class_total[i]}% ({np.sum(class_correct[i])}/{np.sum(class_total[i])})')
         else:
-            print('Test Accuracy of %5s: N/A (no training examples)' % (classes[i]))
+            print(f'Test Accuracy of {classes[i]}: N/A (no training examples)')
 
     print('\nTest Accuracy (Overall): %2d%% (%2d/%2d)' % (
         100. * np.sum(class_correct) / np.sum(class_total),
         np.sum(class_correct), np.sum(class_total)))
+    
+    writer.add_text("accuracy", (100. * np.sum(class_correct) / np.sum(class_total)).__str__())
