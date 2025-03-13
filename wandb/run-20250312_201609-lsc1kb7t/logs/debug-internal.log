@@ -1,0 +1,17 @@
+{"time":"2025-03-12T20:16:09.787944175-04:00","level":"INFO","msg":"stream: starting","core version":"0.19.8","symlink path":"/home/adaly/pytorch_testing/wandb/run-20250312_201609-lsc1kb7t/logs/debug-core.log"}
+{"time":"2025-03-12T20:16:09.891371577-04:00","level":"INFO","msg":"created new stream","id":"lsc1kb7t"}
+{"time":"2025-03-12T20:16:09.891401207-04:00","level":"INFO","msg":"stream: started","id":"lsc1kb7t"}
+{"time":"2025-03-12T20:16:09.891456427-04:00","level":"INFO","msg":"writer: Do: started","stream_id":"lsc1kb7t"}
+{"time":"2025-03-12T20:16:09.89146849-04:00","level":"INFO","msg":"sender: started","stream_id":"lsc1kb7t"}
+{"time":"2025-03-12T20:16:09.891498612-04:00","level":"INFO","msg":"handler: started","stream_id":"lsc1kb7t"}
+{"time":"2025-03-12T20:16:10.166292469-04:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-03-12T20:16:19.815136341-04:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-03-12T20:16:19.815522039-04:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-03-12T20:16:20.780682566-04:00","level":"INFO","msg":"handler: operation stats","stats":{}}
+{"time":"2025-03-12T20:16:29.81611-04:00","level":"INFO","msg":"tensorboard: no root directory after 10 seconds, using working directory"}
+{"time":"2025-03-12T20:16:30.43440191-04:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-03-12T20:16:30.663254242-04:00","level":"INFO","msg":"stream: closing","id":"lsc1kb7t"}
+{"time":"2025-03-12T20:16:30.66329412-04:00","level":"INFO","msg":"handler: closed","stream_id":"lsc1kb7t"}
+{"time":"2025-03-12T20:16:30.663311998-04:00","level":"INFO","msg":"writer: Close: closed","stream_id":"lsc1kb7t"}
+{"time":"2025-03-12T20:16:30.663380846-04:00","level":"INFO","msg":"sender: closed","stream_id":"lsc1kb7t"}
+{"time":"2025-03-12T20:16:30.663437147-04:00","level":"INFO","msg":"stream: closed","id":"lsc1kb7t"}

@@ -1,0 +1,7 @@
+Epoch: 1 	Training Loss: 1.67 	Validation Loss: 0.37
+[34m[1mwandb[0m: [33mWARNING[0m When using several event log directories, please call `wandb.tensorboard.patch(root_logdir="...")` before `wandb.init`
+Validation loss reduced from inf to 0.37. Saving model
+Epoch: 2 	Training Loss: 1.32 	Validation Loss: 0.34
+Validation loss reduced from 0.37 to 0.34. Saving model
+Epoch: 3 	Training Loss: 1.13 	Validation Loss: 0.31
+Validation loss reduced from 0.34 to 0.31. Saving model
