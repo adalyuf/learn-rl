@@ -5,18 +5,19 @@ import gc
 import os 
 import wandb 
 
-from torchvision import datasets, transforms
-
-from torch.utils.data import DataLoader, SubsetRandomSampler
-
+# PyTorch imports
 from torch import nn, optim
 import torch.nn.functional as F
-
+from torch.utils.data import DataLoader, SubsetRandomSampler
+from torchvision import datasets, transforms
+from torch.utils.tensorboard import SummaryWriter
+# Importing custom models
 from class_example import ExampleNet
 from original_alexnet import AlexNet
 from new_alexnet import NewAlexNet
 
-from torch.utils.tensorboard import SummaryWriter
+from types import SimpleNamespace
+
 
 train_transforms = transforms.Compose([
   transforms.Resize((227,227)),
@@ -58,7 +59,24 @@ train_loader        = DataLoader(train_data, batch_size=batch_size, sampler=trai
 validation_loader   = DataLoader(train_data, batch_size=batch_size, sampler=validation_sampler)
 test_loader         = DataLoader(test_data, batch_size=batch_size, sampler=test_sampler)
 
-def model_train(model_choice, epochs, lr=0.1):
+config_defaults = SimpleNamespace(
+    epochs=5,
+    learning_rate=2e-3,
+    model_choice="AlexNet",
+    wandb_project="alexnet-opts",
+)
+
+
+def model_train(config=config_defaults):
+    wandb.tensorboard.patch(root_logdir="runs")
+    wandb.init(project=config.wandb_project, config=config, sync_tensorboard=True)
+    config = wandb.config #Fetch the config from wandb
+    writer = SummaryWriter(log_dir=f'runs/{config.model_choice}')
+    
+    model_choice = config.model_choice
+    epochs = config.epochs
+    lr = config.learning_rate
+    
     if model_choice == "ExampleNet":
         model = ExampleNet()
     elif model_choice == "AlexNet":
@@ -67,15 +85,12 @@ def model_train(model_choice, epochs, lr=0.1):
         model = NewAlexNet()
     else:
         raise ValueError(f"Model choice {model_choice} not recognized")
-    print(f"Using model: {model_choice}")
+    print(f"Using config: {config}")
 
     if not os.path.exists(f'models/{model_choice}'):
         os.mkdir(f'models/{model_choice}')
     if not os.path.exists(f'runs/{model_choice}'):
         os.mkdir(f'runs/{model_choice}')
-
-    writer = SummaryWriter(log_dir=f'runs/{model_choice}')
-    wandb.init(project="alexnet-opts", sync_tensorboard=True)
 
     images, labels = next(iter(train_loader))
     writer.add_images("sample_images", images[1:17], global_step=0)
@@ -131,9 +146,7 @@ def model_train(model_choice, epochs, lr=0.1):
             torch.save(model.state_dict(), f'models/{model_choice}/model_cifar.pt')
             validation_loss_min = validation_loss
             
-    writer.close()
-    wandb.finish()
-    print("Training complete")
+    print("Training complete. Evaluating model...")
     model_eval(model_choice, epochs, lr)
 
 def model_eval(model_choice, epochs=None, lr=None):

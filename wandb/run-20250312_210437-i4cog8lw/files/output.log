@@ -1,0 +1,14 @@
+Test Loss: 1.046079
+Test Accuracy of airplane: 73.0% (730.0/1000.0)
+Test Accuracy of automobile: 70.3% (703.0/1000.0)
+Test Accuracy of bird: 54.9% (549.0/1000.0)
+Test Accuracy of cat: 36.4% (364.0/1000.0)
+Test Accuracy of deer: 43.8% (438.0/1000.0)
+Test Accuracy of dog: 56.7% (567.0/1000.0)
+Test Accuracy of frog: 87.8% (878.0/1000.0)
+Test Accuracy of horse: 70.6% (706.0/1000.0)
+Test Accuracy of ship: 63.1% (631.0/1000.0)
+Test Accuracy of truck: 74.8% (748.0/1000.0)
+
+Test Accuracy (Overall): 63% (6314/10000)
+[34m[1mwandb[0m: [33mWARNING[0m When using several event log directories, please call `wandb.tensorboard.patch(root_logdir="...")` before `wandb.init`

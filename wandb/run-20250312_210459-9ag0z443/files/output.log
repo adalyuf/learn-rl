@@ -1,0 +1,32 @@
+Epoch: 1 	Training Loss: 1.84 	Validation Loss: 0.46
+[34m[1mwandb[0m: [33mWARNING[0m When using several event log directories, please call `wandb.tensorboard.patch(root_logdir="...")` before `wandb.init`
+[34m[1mwandb[0m: [33mWARNING[0m When using several event log directories, please call `wandb.tensorboard.patch(root_logdir="...")` before `wandb.init`
+Validation loss reduced from inf to 0.46. Saving model
+Epoch: 2 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model
+Epoch: 3 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model
+Epoch: 4 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model
+Epoch: 5 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model
+Epoch: 6 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model
+Epoch: 7 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model
+Epoch: 8 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model
+Epoch: 9 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model
+Epoch: 10 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model
+Epoch: 11 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model
+Epoch: 12 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model
+Epoch: 13 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model
+Epoch: 14 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model
+Epoch: 15 	Training Loss: 1.84 	Validation Loss: 0.46
+Validation loss reduced from 0.46 to 0.46. Saving model

@@ -1,0 +1,48 @@
+2025-03-16 15:40:08,808 INFO    MainThread:7285 [wandb_setup.py:_flush():67] Current SDK version is 0.19.8
+2025-03-16 15:40:08,808 INFO    MainThread:7285 [wandb_setup.py:_flush():67] Configure stats pid to 7285
+2025-03-16 15:40:08,808 INFO    MainThread:7285 [wandb_setup.py:_flush():67] Loading settings from /home/adaly/.config/wandb/settings
+2025-03-16 15:40:08,808 INFO    MainThread:7285 [wandb_setup.py:_flush():67] Loading settings from /home/adaly/pytorch_testing/wandb/settings
+2025-03-16 15:40:08,808 INFO    MainThread:7285 [wandb_setup.py:_flush():67] Loading settings from environment variables
+2025-03-16 15:40:08,809 INFO    MainThread:7285 [wandb_init.py:setup_run_log_directory():647] Logging user logs to /home/adaly/pytorch_testing/wandb/run-20250316_154008-zp0783lg/logs/debug.log
+2025-03-16 15:40:08,809 INFO    MainThread:7285 [wandb_init.py:setup_run_log_directory():648] Logging internal logs to /home/adaly/pytorch_testing/wandb/run-20250316_154008-zp0783lg/logs/debug-internal.log
+2025-03-16 15:40:08,811 INFO    MainThread:7285 [wandb_init.py:init():761] calling init triggers
+2025-03-16 15:40:08,811 INFO    MainThread:7285 [wandb_init.py:init():766] wandb.init called with sweep_config: {}
+config: {'epochs': 5, 'learning_rate': 0.002, 'model_choice': 'AlexNet', 'wandb_project': 'alexnet-opts', '_wandb': {}}
+2025-03-16 15:40:08,811 INFO    MainThread:7285 [wandb_init.py:init():784] starting backend
+2025-03-16 15:40:08,811 INFO    MainThread:7285 [wandb_init.py:init():788] sending inform_init request
+2025-03-16 15:40:08,814 INFO    MainThread:7285 [backend.py:_multiprocessing_setup():101] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2025-03-16 15:40:08,814 INFO    MainThread:7285 [wandb_init.py:init():798] backend started and connected
+2025-03-16 15:40:08,814 INFO    MainThread:7285 [wandb_init.py:init():891] updated telemetry
+2025-03-16 15:40:08,820 INFO    MainThread:7285 [wandb_init.py:init():915] communicating run to backend with 90.0 second timeout
+2025-03-16 15:40:09,849 INFO    MainThread:7285 [wandb_init.py:init():990] starting run threads in backend
+2025-03-16 15:40:09,944 INFO    MainThread:7285 [wandb_run.py:_console_start():2375] atexit reg
+2025-03-16 15:40:09,944 INFO    MainThread:7285 [wandb_run.py:_redirect():2227] redirect: wrap_raw
+2025-03-16 15:40:09,944 INFO    MainThread:7285 [wandb_run.py:_redirect():2292] Wrapping output streams.
+2025-03-16 15:40:09,944 INFO    MainThread:7285 [wandb_run.py:_redirect():2315] Redirects installed.
+2025-03-16 15:40:09,945 INFO    MainThread:7285 [wandb_init.py:init():1032] run started, returning control to user process
+2025-03-16 15:41:12,522 INFO    MainThread:7285 [wandb_run.py:_tensorboard_callback():1449] tensorboard callback: runs/AlexNet/Combined loss_train, True
+2025-03-16 15:41:12,523 INFO    MainThread:7285 [wandb_run.py:_tensorboard_callback():1449] tensorboard callback: runs/AlexNet/Combined loss_validation, True
+2025-03-16 15:42:00,320 INFO    MainThread:7285 [wandb_run.py:_tensorboard_callback():1449] tensorboard callback: runs/AlexNet, True
+2025-03-16 15:42:00,324 INFO    MainThread:7285 [wandb_init.py:setup_run_log_directory():647] Logging user logs to /home/adaly/pytorch_testing/wandb/run-20250316_154200-gx9rffcc/logs/debug.log
+2025-03-16 15:42:00,324 INFO    MainThread:7285 [wandb_init.py:setup_run_log_directory():648] Logging internal logs to /home/adaly/pytorch_testing/wandb/run-20250316_154200-gx9rffcc/logs/debug-internal.log
+2025-03-16 15:42:00,324 INFO    MainThread:7285 [wandb_init.py:init():761] calling init triggers
+2025-03-16 15:42:00,324 INFO    MainThread:7285 [wandb_init.py:init():766] wandb.init called with sweep_config: {}
+config: {'epochs': 5, 'learning_rate': 0.002, 'model_choice': 'AlexNet', 'wandb_project': 'alexnet-opts', '_wandb': {}}
+2025-03-16 15:42:00,324 INFO    MainThread:7285 [wandb_init.py:init():776] wandb.init() called while a run is active
+2025-03-16 15:43:03,541 INFO    MainThread:7285 [wandb_run.py:_tensorboard_callback():1449] tensorboard callback: runs/AlexNet/Combined loss_train, True
+2025-03-16 15:43:03,541 INFO    MainThread:7285 [wandb_run.py:_tensorboard_callback():1449] tensorboard callback: runs/AlexNet/Combined loss_validation, True
+2025-03-16 15:47:15,236 INFO    MainThread:7285 [wandb_run.py:_tensorboard_callback():1449] tensorboard callback: runs/AlexNet, True
+2025-03-16 15:47:15,238 INFO    MainThread:7285 [wandb_init.py:setup_run_log_directory():647] Logging user logs to /home/adaly/pytorch_testing/wandb/run-20250316_154715-a2unnq3k/logs/debug.log
+2025-03-16 15:47:15,238 INFO    MainThread:7285 [wandb_init.py:setup_run_log_directory():648] Logging internal logs to /home/adaly/pytorch_testing/wandb/run-20250316_154715-a2unnq3k/logs/debug-internal.log
+2025-03-16 15:47:15,238 INFO    MainThread:7285 [wandb_init.py:init():761] calling init triggers
+2025-03-16 15:47:15,239 INFO    MainThread:7285 [wandb_init.py:init():766] wandb.init called with sweep_config: {}
+config: {'_wandb': {}}
+2025-03-16 15:47:15,239 INFO    MainThread:7285 [wandb_init.py:init():776] wandb.init() called while a run is active
+2025-03-16 15:47:25,061 INFO    MainThread:7285 [wandb_run.py:_tensorboard_callback():1449] tensorboard callback: runs/AlexNet/1742154445.0613048, True
+2025-03-16 15:47:25,062 INFO    MainThread:7285 [wandb_run.py:_finish():2112] finishing run adalyuf-n-a/alexnet-opts/zp0783lg
+2025-03-16 15:47:25,062 INFO    MainThread:7285 [wandb_run.py:_atexit_cleanup():2340] got exitcode: 0
+2025-03-16 15:47:25,062 INFO    MainThread:7285 [wandb_run.py:_restore():2322] restore
+2025-03-16 15:47:25,062 INFO    MainThread:7285 [wandb_run.py:_restore():2328] restore done
+2025-03-16 15:47:26,688 INFO    MainThread:7285 [wandb_run.py:_footer_history_summary_info():3956] rendering history
+2025-03-16 15:47:26,688 INFO    MainThread:7285 [wandb_run.py:_footer_history_summary_info():3988] rendering summary
+2025-03-16 15:47:26,688 INFO    MainThread:7285 [wandb_run.py:_footer_sync_info():3917] logging synced files

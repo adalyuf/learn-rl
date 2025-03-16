@@ -1,0 +1,14 @@
+2025-03-16 15:53:35,952 INFO    MainThread:8009 [wandb_init.py:setup_run_log_directory():647] Logging user logs to /home/adaly/pytorch_testing/wandb/run-20250316_155335-1a16b3eo/logs/debug.log
+2025-03-16 15:53:35,952 INFO    MainThread:8009 [wandb_init.py:setup_run_log_directory():648] Logging internal logs to /home/adaly/pytorch_testing/wandb/run-20250316_155335-1a16b3eo/logs/debug-internal.log
+2025-03-16 15:53:35,952 INFO    MainThread:8009 [wandb_init.py:init():761] calling init triggers
+2025-03-16 15:53:35,952 INFO    MainThread:8009 [wandb_init.py:init():766] wandb.init called with sweep_config: {}
+config: {'_wandb': {}}
+2025-03-16 15:53:35,952 INFO    MainThread:8009 [wandb_init.py:init():776] wandb.init() called while a run is active
+2025-03-16 15:53:45,452 INFO    MainThread:8009 [wandb_run.py:_tensorboard_callback():1449] tensorboard callback: runs/AlexNet/1742154825.4527724, True
+2025-03-16 15:53:45,453 INFO    MainThread:8009 [wandb_run.py:_finish():2112] finishing run adalyuf-n-a/alexnet-opts/3rck8nsa
+2025-03-16 15:53:45,453 INFO    MainThread:8009 [wandb_run.py:_atexit_cleanup():2340] got exitcode: 0
+2025-03-16 15:53:45,453 INFO    MainThread:8009 [wandb_run.py:_restore():2322] restore
+2025-03-16 15:53:45,453 INFO    MainThread:8009 [wandb_run.py:_restore():2328] restore done
+2025-03-16 15:53:48,140 INFO    MainThread:8009 [wandb_run.py:_footer_history_summary_info():3956] rendering history
+2025-03-16 15:53:48,141 INFO    MainThread:8009 [wandb_run.py:_footer_history_summary_info():3988] rendering summary
+2025-03-16 15:53:48,141 INFO    MainThread:8009 [wandb_run.py:_footer_sync_info():3917] logging synced files

@@ -1,0 +1,15 @@
+2025-03-16 15:47:15,238 INFO    MainThread:7285 [wandb_init.py:setup_run_log_directory():647] Logging user logs to /home/adaly/pytorch_testing/wandb/run-20250316_154715-a2unnq3k/logs/debug.log
+2025-03-16 15:47:15,238 INFO    MainThread:7285 [wandb_init.py:setup_run_log_directory():648] Logging internal logs to /home/adaly/pytorch_testing/wandb/run-20250316_154715-a2unnq3k/logs/debug-internal.log
+2025-03-16 15:47:15,238 INFO    MainThread:7285 [wandb_init.py:init():761] calling init triggers
+2025-03-16 15:47:15,239 INFO    MainThread:7285 [wandb_init.py:init():766] wandb.init called with sweep_config: {}
+config: {'_wandb': {}}
+2025-03-16 15:47:15,239 INFO    MainThread:7285 [wandb_init.py:init():776] wandb.init() called while a run is active
+2025-03-16 15:47:25,061 INFO    MainThread:7285 [wandb_run.py:_tensorboard_callback():1449] tensorboard callback: runs/AlexNet/1742154445.0613048, True
+2025-03-16 15:47:25,062 INFO    MainThread:7285 [wandb_run.py:_finish():2112] finishing run adalyuf-n-a/alexnet-opts/zp0783lg
+2025-03-16 15:47:25,062 INFO    MainThread:7285 [wandb_run.py:_atexit_cleanup():2340] got exitcode: 0
+2025-03-16 15:47:25,062 INFO    MainThread:7285 [wandb_run.py:_restore():2322] restore
+2025-03-16 15:47:25,062 INFO    MainThread:7285 [wandb_run.py:_restore():2328] restore done
+2025-03-16 15:47:26,688 INFO    MainThread:7285 [wandb_run.py:_footer_history_summary_info():3956] rendering history
+2025-03-16 15:47:26,688 INFO    MainThread:7285 [wandb_run.py:_footer_history_summary_info():3988] rendering summary
+2025-03-16 15:47:26,688 INFO    MainThread:7285 [wandb_run.py:_footer_sync_info():3917] logging synced files
+2025-03-16 15:47:36,698 INFO    MsgRouterThr:7285 [mailbox.py:close():129] Closing mailbox, abandoning 1 handles.

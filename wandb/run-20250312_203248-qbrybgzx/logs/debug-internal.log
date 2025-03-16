@@ -1,0 +1,18 @@
+{"time":"2025-03-12T20:32:48.87525425-04:00","level":"INFO","msg":"stream: starting","core version":"0.19.8","symlink path":"/home/adaly/pytorch_testing/wandb/run-20250312_203248-qbrybgzx/logs/debug-core.log"}
+{"time":"2025-03-12T20:32:48.979821188-04:00","level":"INFO","msg":"created new stream","id":"qbrybgzx"}
+{"time":"2025-03-12T20:32:48.979905132-04:00","level":"INFO","msg":"stream: started","id":"qbrybgzx"}
+{"time":"2025-03-12T20:32:48.980018297-04:00","level":"INFO","msg":"writer: Do: started","stream_id":"qbrybgzx"}
+{"time":"2025-03-12T20:32:48.980075794-04:00","level":"INFO","msg":"handler: started","stream_id":"qbrybgzx"}
+{"time":"2025-03-12T20:32:48.980192892-04:00","level":"INFO","msg":"sender: started","stream_id":"qbrybgzx"}
+{"time":"2025-03-12T20:32:49.289675693-04:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-03-12T20:33:52.135089567-04:00","level":"INFO","msg":"tensorboard: inferred root directory","rootDir":"/home/adaly/pytorch_testing/runs/AlexNet","logDir":"/home/adaly/pytorch_testing/runs/AlexNet/Combined loss_validation","namespace":"Combined loss_validation"}
+{"time":"2025-03-12T20:33:52.135124338-04:00","level":"INFO","msg":"tensorboard: inferred root directory","rootDir":"/home/adaly/pytorch_testing/runs/AlexNet","logDir":"/home/adaly/pytorch_testing/runs/AlexNet/Combined loss_train","namespace":"Combined loss_train"}
+{"time":"2025-03-12T20:48:27.029701159-04:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-03-12T20:48:27.030036871-04:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-03-12T20:48:27.525402806-04:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-03-12T20:48:27.708621249-04:00","level":"INFO","msg":"handler: operation stats","stats":{}}
+{"time":"2025-03-12T20:48:27.710276989-04:00","level":"INFO","msg":"stream: closing","id":"qbrybgzx"}
+{"time":"2025-03-12T20:48:27.710284906-04:00","level":"INFO","msg":"handler: closed","stream_id":"qbrybgzx"}
+{"time":"2025-03-12T20:48:27.710291344-04:00","level":"INFO","msg":"writer: Close: closed","stream_id":"qbrybgzx"}
+{"time":"2025-03-12T20:48:27.710324323-04:00","level":"INFO","msg":"sender: closed","stream_id":"qbrybgzx"}
+{"time":"2025-03-12T20:48:27.710338639-04:00","level":"INFO","msg":"stream: closed","id":"qbrybgzx"}
