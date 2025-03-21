@@ -2,7 +2,7 @@ from torch import nn
 import torch.nn.functional as F
 
 class AlexNet(nn.Module):
-    def __init__(self):
+    def __init__(self, num_classes=10):
         super().__init__()
         #AlexNet expects 3x227x227 input
         #Convnet order is depth in, depth out, kernel size, stride, padding
@@ -14,7 +14,7 @@ class AlexNet(nn.Module):
         self.pool = nn.MaxPool2d(3, stride=2)
         self.fc1 = nn.Linear(256*6*6, 4096)
         self.fc2 = nn.Linear(4096, 4096)
-        self.fc3 = nn.Linear(4096, 10)
+        self.fc3 = nn.Linear(4096, num_classes)
 
     def forward(self, x):
         x = self.pool(F.relu(self.conv1(x))) #Conv1: 55x55x96 Pool: 27x27x96
