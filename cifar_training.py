@@ -19,11 +19,15 @@ from new_alexnet import NewAlexNet
 
 from types import SimpleNamespace
 
+validation_ratio = 0.2
+batch_size = 256
+num_workers = 4
+dataset_name = 'cifar'
 
 train_transforms = transforms.Compose([
   transforms.Resize((227,227)),
-  transforms.RandomHorizontalFlip(),
-  transforms.RandomRotation(30),
+#   transforms.RandomHorizontalFlip(),
+#   transforms.RandomRotation(30),
   transforms.ToTensor(),
   transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5))
 ])
@@ -37,10 +41,6 @@ train_data = datasets.CIFAR10('data', train=True, download=True, transform=train
 test_data = datasets.CIFAR10('data', train=False, download=True, transform=test_transforms)
 
 classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-
-validation_ratio = 0.2
-batch_size = 64
-dataset_name = 'cifar'
 
 if not os.path.exists(f'models/{dataset_name}'):
     os.mkdir(f'models/{dataset_name}')
@@ -63,39 +63,35 @@ train_sampler       = SubsetRandomSampler(train_indices)
 validation_sampler  = SubsetRandomSampler(validation_indices)
 test_sampler        = SubsetRandomSampler(list(range(len(test_data))))
 
-train_loader        = DataLoader(train_data, batch_size=batch_size, sampler=train_sampler)
-validation_loader   = DataLoader(train_data, batch_size=batch_size, sampler=validation_sampler)
-test_loader         = DataLoader(test_data, batch_size=batch_size, sampler=test_sampler)
+train_loader        = DataLoader(train_data, batch_size=batch_size, sampler=train_sampler, num_workers=num_workers, pin_memory=True)
+validation_loader   = DataLoader(train_data, batch_size=batch_size, sampler=validation_sampler, num_workers=num_workers, pin_memory=True)
+test_loader         = DataLoader(test_data, batch_size=batch_size, sampler=test_sampler, num_workers=num_workers, pin_memory=True)
 
 config_defaults = SimpleNamespace(
     epochs=5,
-    learning_rate=2e-3,
+    learning_rate=0.01,
     model_choice="AlexNet",
     wandb_project="alexnet-opts",
-    bn_before_relu=True # This is a hyperparameter for the NewAlexNet model
+    bn_before_relu=True, # This is a hyperparameter for the NewAlexNet model
+    dropout_rate=0.1,
+    initialization='xavier',
+    momentum=0.9,
+    learning_rate_decay=0.9
 )
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--epochs', type=int, default=config_defaults.epochs)
-    parser.add_argument('--learning_rate', type=float, default=config_defaults.learning_rate)
-    parser.add_argument('--model_choice', type=str, default=config_defaults.model_choice)
-    parser.add_argument('--wandb_project', type=str, default=config_defaults.wandb_project)
-    return parser.parse_args()
 
 sweep_config = {
     'method': 'grid', # 'random', 'grid', 'bayes'
-    'name': 'CIFAR10 Dropout Impact',
+    'name': '4 workers, 256 batch',
     'metric': {
         'goal': 'maximize',
         'name': 'Eval/accuracy'
     },
     'parameters': {
         'epochs': {
-            'values': [10]
+            'values': [20]
         },
         'learning_rate': {
-            'values': [0.05]
+            'values': [0.01]
         },
         'model_choice': {
             'values': ['NewAlexNet'] 
@@ -104,14 +100,22 @@ sweep_config = {
             'values': [True]
         },
         'dropout_rate': {
-            'values': [0.0, 0.1, 0.25, 0.5, 0.9] # Dropout rate only applies to NewAlexNet
+            'values': [0, 0.1, 0.25] # Dropout rate only applies to NewAlexNet
         },
         'initialization': {
             'values': ['xavier'] # ['xavier', 'kaiming', 'orthogonal']
-        }
+        },
+        'momentum': {
+            'values': [0.9]
+        },
+        'learning_rate_decay': {
+            'values': [0.9]
+        },
     }
 }
-sweep_id = wandb.sweep(sweep_config, project=config_defaults.wandb_project)
+def sweep():
+    sweep_id = wandb.sweep(sweep_config, project=config_defaults.wandb_project)
+    wandb.agent(sweep_id, function=model_train)
 
 for model in sweep_config['parameters']['model_choice']['values']:
     if not os.path.exists(f'wandb/{dataset_name}/{model}'):
@@ -121,7 +125,7 @@ for model in sweep_config['parameters']['model_choice']['values']:
     if not os.path.exists(f'runs/{dataset_name}/{model}'):
         os.mkdir(f'runs/{dataset_name}/{model}')
 
-def model_train(config=config_defaults):
+def model_train(config=config_defaults, use_last=False):
     with wandb.init(project=config.wandb_project, config=config, dir=f'wandb/{dataset_name}/{config.model_choice}'):
         config = wandb.config #Fetch the config from wandb
         
@@ -138,6 +142,9 @@ def model_train(config=config_defaults):
             print(f"Using bn_before_relu: {config.bn_before_relu}")
         else:
             raise ValueError(f"Model choice {model_choice} not recognized")
+        if use_last:
+            model.load_state_dict(torch.load(f'models/{dataset_name}/{model_choice}/model.pt'))
+            print(f"Loading last model from models/{dataset_name}/{model_choice}/model.pt")
         print(f"Using config: {config}")
 
         def init_weights(module):
@@ -165,13 +172,16 @@ def model_train(config=config_defaults):
         wandb.log({"sample_images": sample_images})
 
         criterion = nn.CrossEntropyLoss()
-        optimizer = optim.SGD(model.parameters(), lr=lr)
+        optimizer = optim.SGD(model.parameters(), lr=lr, momentum=config.momentum)
+        scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=config.learning_rate_decay)
 
         validation_loss_min = np.inf
 
         for epoch in range(1, epochs+1):
             train_loss = 0.0
             validation_loss = 0.0
+            images_processed = 0
+            batches_processed = 0
 
             #Begin training
             model.train()
@@ -184,9 +194,18 @@ def model_train(config=config_defaults):
                 output = model(data)
                 loss = criterion(output, target)
                 loss.backward()
-                wandb.log({"batch_train_loss": loss.item()})
                 optimizer.step()
                 train_loss += loss.item() * data.size(0)
+                images_processed += data.size(0)
+                batches_processed += 1
+                if batches_processed % 10 == 0: #Log every 10 batches
+                    wandb.log({
+                        "train/batch_loss"         : loss.item(),
+                        "train/batch_accuracy"     : (torch.sum(torch.argmax(output, dim=1).eq(target.data)).item()/data.size(0)),
+                        "progress/batches_processed"  : batches_processed,
+                        "progress/batch_size"         : data.size(0),
+                        "progress/images_processed"   : images_processed
+                    })
 
             #Begin validation
             model.eval()
@@ -197,8 +216,19 @@ def model_train(config=config_defaults):
                     model = model.cuda()
                 output = model(data)
                 loss = criterion(output, target)
-                wandb.log({"batch_validation_loss": loss.item()})
                 validation_loss += loss.item() * data.size(0)
+                images_processed += data.size(0)
+                batches_processed += 1
+                if batches_processed % 10 == 0: #Log every 10 batches
+                    wandb.log({
+                        "train/batch_val_loss"     : loss.item(),
+                        "train/batch_val_accuracy" : (torch.sum(torch.argmax(output, dim=1).eq(target.data)).item()/data.size(0)),
+                        "progress/batches_processed"  : batches_processed,
+                        "progress/batch_size"         : data.size(0),
+                        "progress/images_processed"   : images_processed
+                    })
+            
+            scheduler.step() #Decay the learning rate
 
             train_loss = train_loss / len(train_loader.dataset)
             validation_loss = validation_loss / len(validation_loader.dataset)
@@ -235,7 +265,8 @@ def model_eval(model_choice, epochs=None, lr=None, bn_before_relu=True, dropout_
     test_loss = 0.0
     class_correct = list(0.0 for i in range(10))
     class_total = list(0.0 for i in range(10))
-    n_runs = 0 
+    images_processed = 0
+    batches_processed = 0
 
     model.eval()
     for data, target in test_loader:
@@ -248,15 +279,23 @@ def model_eval(model_choice, epochs=None, lr=None, bn_before_relu=True, dropout_
         test_loss = test_loss + (loss.item() * data.size(0))
         _, pred = torch.max(output, dim=1)
         correct = pred.eq(target.data)
-        wandb.log({
-            "Eval/memory_allocated"   : torch.cuda.memory_allocated(),
-            "Eval/memory_reserved"    : torch.cuda.memory_reserved(),
-            "Eval/batch_loss"         : loss.item(),
-            "Eval/accuracy"           : torch.sum(correct).item()/data.size(0),
-            "Eval/n_runs"             : n_runs,
-            "Eval/batch_size"         : data.size(0)
-        })
-        n_runs += 1
+        images_processed += data.size(0)
+        batches_processed += 1
+        if batches_processed == 1:
+            sample_images = data[:16].cpu().numpy() #Get first 16 images for logging
+            sample_images = sample_images.transpose((0, 2, 3, 1))  # Convert from [N, C, H, W] to [N, H, W, C]
+            sample_images = (sample_images * 0.5 + 0.5) * 255  # Denormalize and scale to [0, 255]
+            sample_images = sample_images.astype(np.uint8)  # Convert to uint8 for visualization
+            sample_images = [wandb.Image(img, caption=f'Pred: {classes[pred[i]]}\nCorrect: {classes[target[i]]}') for i, img in enumerate(sample_images)]
+            wandb.log({"Test Images": sample_images})
+        if batches_processed % 10 == 0: #Log every 10 batches
+            wandb.log({
+                "Eval/batch_loss"         : loss.item(),
+                "Eval/batch_accuracy"     : torch.sum(correct).item()/data.size(0),
+                "progress/images_processed"   : images_processed,
+                "progress/batches_processed"  : batches_processed,
+                "progress/batch_size"         : data.size(0)
+            })
   
         for i in range(data.size(0)): #Data size 0 indicates batch size
             label = target.data[i]
