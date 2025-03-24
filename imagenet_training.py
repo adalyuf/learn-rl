@@ -21,7 +21,7 @@ from types import SimpleNamespace
 
 validation_ratio = 0.1 #10% of the training data will be used for validation
 batch_size = 128
-num_workers = 8
+num_workers = 6
 dataset_name = 'imagenet'
 data_dir = '/home/adaly/pytorch_testing/data/imagenet/'
 
@@ -66,8 +66,8 @@ if not os.path.exists(f'wandb/{dataset_name}'):
     os.mkdir(f'wandb/{dataset_name}')
 
 config_defaults = SimpleNamespace(
-    epochs=5,
-    learning_rate=0.01,
+    epochs=20,
+    learning_rate=0.001,
     model_choice="AlexNet",
     wandb_project="alexnet-opts",
     bn_before_relu=True, # This is a hyperparameter for the NewAlexNet model
@@ -146,7 +146,6 @@ def model_train(config=config_defaults, use_last=False):
             model = AlexNet(num_classes=1000)
         elif model_choice == "NewAlexNet":
             model = NewAlexNet(bn_before_relu=config.bn_before_relu, num_classes=1000, dropout_rate=config.dropout_rate)
-            print(f"Using bn_before_relu: {config.bn_before_relu}")
         else:
             raise ValueError(f"Model choice {model_choice} not recognized")
         if use_last:  
@@ -185,12 +184,12 @@ def model_train(config=config_defaults, use_last=False):
         validation_loss_min = np.inf
 
         print(f"Training {model_choice} for {epochs} epochs with learning rate {lr}")
+        print(f"Using {torch.cuda.get_device_name(0)}") if torch.cuda.is_available() else print("Using CPU")
         for epoch in range(1, epochs+1):
             train_loss = 0.0
             validation_loss = 0.0
             images_processed = 0
             batches_processed = 0
-            print(f"CUDA Available: {torch.cuda.is_available()}")
             
             #Begin training
             model.train()
@@ -276,6 +275,7 @@ def model_eval(model_choice, epochs=None, lr=None, bn_before_relu=True, dropout_
     class_total = list(0.0 for i in range(1000))
     images_processed = 0
     batches_processed = 0
+    top5_correct = 0
 
     model.eval()
     for data, target in test_loader:
@@ -288,6 +288,8 @@ def model_eval(model_choice, epochs=None, lr=None, bn_before_relu=True, dropout_
         test_loss = test_loss + (loss.item() * data.size(0))
         _, pred = torch.max(output, dim=1)
         correct = pred.eq(target.data)
+        _, top5_pred = torch.topk(output, 5, dim=1)
+        top5_correct += torch.sum(top5_pred.eq(target.data.view(-1, 1)).any(dim=1)).item()
         images_processed += data.size(0)
         batches_processed += 1
         if batches_processed == 1:
@@ -318,9 +320,13 @@ def model_eval(model_choice, epochs=None, lr=None, bn_before_relu=True, dropout_
         100. * np.sum(class_correct) / np.sum(class_total),
         np.sum(class_correct), np.sum(class_total)))
     
+    top5_accuracy = 100.0 * top5_correct / len(test_loader.dataset)
+    print(f'Top 5 Accuracy: {top5_accuracy:.2f}%')
+    
     wandb.log({
         "Eval/test_loss": test_loss,
-        "Eval/accuracy": (100. * np.sum(class_correct) / np.sum(class_total))
+        "Eval/accuracy": (100. * np.sum(class_correct) / np.sum(class_total)),
+        "Eval/top5_accuracy": top5_accuracy,
     })
     
     wandb.finish()
